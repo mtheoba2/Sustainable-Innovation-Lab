@@ -1,4 +1,4 @@
-# Arduino TFT + Dual Ultrasonic + Buzzer Project (ILI9341 + HC-SR04)
+# SmoBI the smart monitoring bin!
 This is the code repository of the SmoBi project. 
 
 This guide shows you how to **wire**, **install libraries**, **upload**, and **run** the provided Arduino sketch that:
