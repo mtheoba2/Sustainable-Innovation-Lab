@@ -1,5 +1,11 @@
-# SmoBI the smart monitoring bin!
-This is the code repository of the SmoBi project. 
+# SmoBi - the Smart Monitoring bin!
+This is the code repository of the SmoBi (Smart Monitoring Bin) project. 
+
+SmoBi is an interactive smart waste bin system that:
+- detects throw-in events
+- monitors fill level
+- provides user feedback via screen + sound
+- visualizes availability and fullness of bins in a human-friendly way
 
 This guide shows you how to **wire**, **install libraries**, **upload**, and **run** the provided Arduino sketch that:
 - reads **two ultrasonic sensors** (HC-SR04-style),
