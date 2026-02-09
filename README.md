@@ -29,9 +29,18 @@ This guide shows you how to **wire**, **install libraries**, **upload**, and **r
 
 ---
 
-## 2) Wiring (IMPORTANT)
+## 2) Wiring 
+For the project wiring setup follow the following schematic and breadboard diagram. 
+Disclaimer: Most SPI Displays operate with 3.3v logic drivers, therefore we implemented a logic level shift with the help of resistors. Wiring directly to a 5v Arduino may damage the display's electronics.
 
-tbd.
+*Breadboard view*
+<img width="4541" height="2257" alt="Breadboard_bb" src="https://github.com/user-attachments/assets/ddda60bf-f6d2-46ed-9dbb-0dd44d79de86" />
+
+*Schematic view*
+
+![Schaltplan](https://github.com/user-attachments/assets/6f542f13-2717-4c90-8a8b-7b7f7784744f)
+
+
 
 ## 3) Install required libraries
 
