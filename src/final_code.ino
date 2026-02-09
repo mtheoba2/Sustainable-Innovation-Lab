@@ -1,20 +1,24 @@
+// This is the final code of the SmoBi Project. Upload this code onto your arduino to test and validate our project!
+
+// imports
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include <math.h>
 
-// ---------- TFT ----------
+// TFT Display Pin definitions 
 #define TFT_CS   10
 #define TFT_DC    9
 #define TFT_RST   8
 Adafruit_ILI9341 tft(TFT_CS, TFT_DC, TFT_RST);
 
-// ---------- Ultrasonic ----------
+// Ultrasonic Sensor Pin Definitions 
 #define TRIG1 6
 #define ECHO1 7
 #define TRIG2 4
 #define ECHO2 5
 
+// function to read the distance to bin wall via ultrasonic sensors
 float readDistanceCM(int trigPin, int echoPin) {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -23,13 +27,13 @@ float readDistanceCM(int trigPin, int echoPin) {
   digitalWrite(trigPin, LOW);
 
   long duration = pulseIn(echoPin, HIGH, 30000); // 30ms timeout
-  if (duration == 0) return -1;                 // no echo
+  if (duration == 0) return -1;                 // reduce echo
   return duration * 0.0343f / 2.0f;
 }
 
-// ---------- Buzzer (tone) ----------
+// Buzzer (tone)
 #define BUZZER_PIN 3
-
+// plays sound for throw in event
 void playGreenSound() {
   // C-E-G, with slightly longer G
   tone(BUZZER_PIN, 262, 120); // C4
@@ -41,11 +45,16 @@ void playGreenSound() {
   noTone(BUZZER_PIN);
 }
 
-// ---------- Behavior tuning ----------
+// Behavior tuning, change this to fit your bin type!
+// distance to bin wall 
 const float NORMAL_CM = 17.0;
+// tolerance
 const float TOLERANCE_CM = 2.0;
+// how long a throw in event can last 
 const unsigned long TRANSIENT_MAX_MS = 1000;
+// how long feedback is shown
 const unsigned long GREEN_HOLD_MS = 2000;
+// how long screen stays until it is updated 
 const unsigned long ALARM_CLEAR_MS = 2000;
 
 // checks deviation from sensor distances
@@ -54,13 +63,13 @@ bool isNormalDistance(float d) {
   return fabs(d - NORMAL_CM) <= TOLERANCE_CM;
 }
 
-// ---------- Color palette (set after tft.begin) ----------
+// Color palette 
 uint16_t NEUTRAL_BG;   // navy idle background
 uint16_t SUCCESS_BG;   // green success background
 uint16_t TEXT_IDLE;    // idle text/icon color
 uint16_t TEXT_OK;      // success text/icon color
 
-// ---------- Drawing helpers ----------
+// Drawing helpers
 void drawCenteredText(const char* msg, int16_t y, uint8_t size, uint16_t fg, uint16_t bg) {
   tft.setTextSize(size);
   tft.setTextWrap(false);
@@ -76,7 +85,7 @@ void drawCenteredText(const char* msg, int16_t y, uint8_t size, uint16_t fg, uin
   tft.setCursor(x, y);
   tft.print(msg);
 }
-
+// function to draw the smiley face
 void drawSmiley(int16_t cx, int16_t cy, int16_t r, uint16_t color, bool happy) {
   tft.drawCircle(cx, cy, r, color);
 
@@ -100,7 +109,7 @@ void drawSmiley(int16_t cx, int16_t cy, int16_t r, uint16_t color, bool happy) {
     tft.drawLine(cx, mouthY, rightX, mouthY + d, color);
   }
 }
-
+// function to draw the arrow directing to next bin
 void drawArrowRight(int16_t x, int16_t y, int16_t length, int16_t height, uint16_t color) {
   // shaft
   tft.fillRect(x, y - height/6, length, height/3, color);
@@ -115,7 +124,7 @@ void drawArrowRight(int16_t x, int16_t y, int16_t length, int16_t height, uint16
   );
 }
 
-// ---------- Screens ----------
+// Screens
 void drawNormalScreen() {
   tft.fillScreen(NEUTRAL_BG);
 
@@ -126,7 +135,7 @@ void drawNormalScreen() {
   drawSmiley(cx, cy, r, TEXT_IDLE, true);
   drawCenteredText("I have space!", tft.height() - 50, 2, TEXT_IDLE, NEUTRAL_BG);
 }
-
+// draw throw in event screen
 void drawGreenScreen() {
   tft.fillScreen(SUCCESS_BG);
 
@@ -138,7 +147,7 @@ void drawGreenScreen() {
   drawCenteredText("thanks for keeping", tft.height() - 70, 2, TEXT_OK, SUCCESS_BG);
   drawCenteredText("this city clean!",   tft.height() - 45, 2, TEXT_OK, SUCCESS_BG);
 }
-
+// draw bin full screen
 void drawRedScreen() {
   tft.fillScreen(ILI9341_RED);
 
@@ -167,7 +176,7 @@ void drawRedScreen() {
   tft.print("200m");
 }
 
-// ---------- State machine ----------
+// State machine 
 enum Mode { MODE_NORMAL, MODE_CHECKING, MODE_GREEN_HOLD, MODE_ALARM };
 Mode mode = MODE_NORMAL;
 
@@ -196,7 +205,7 @@ void setup() {
   tft.begin();
   tft.setRotation(1);
 
-  // ----- Apply palette AFTER tft.begin() -----
+  // Apply palette 
   NEUTRAL_BG = tft.color565(10, 30, 80);   // navy idle
   SUCCESS_BG = tft.color565(30, 130, 30);  // green success
   TEXT_IDLE  = ILI9341_WHITE;              // white on navy
@@ -205,11 +214,11 @@ void setup() {
   drawNormalScreen();
   lastDrawnMode = MODE_NORMAL;
 }
-
+// main loop
 void loop() {
   unsigned long now = millis();
 
-  // Measure distances (used for logic, not displayed)
+  // Measure distances 
   float d1 = readDistanceCM(TRIG1, ECHO1);
   delay(50);
   float d2 = readDistanceCM(TRIG2, ECHO2);
@@ -263,12 +272,12 @@ void loop() {
       break;
   }
 
-  // Redraw only when mode changes (reduces flicker)
+  // Redraw only when mode changes 
   if (mode != lastDrawnMode) {
     if (mode == MODE_NORMAL)          drawNormalScreen();
     else if (mode == MODE_GREEN_HOLD) drawGreenScreen();
     else if (mode == MODE_ALARM)      drawRedScreen();
-    else                              drawNormalScreen(); // MODE_CHECKING
+    else                              drawNormalScreen(); 
 
     lastDrawnMode = mode;
   }
