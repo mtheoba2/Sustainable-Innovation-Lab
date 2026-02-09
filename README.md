@@ -37,6 +37,7 @@ For the project wiring setup follow the following schematic and breadboard diagr
 Disclaimer: Most SPI Displays operate with 3.3v logic drivers, therefore we implemented a logic level shift with the help of resistors. Wiring directly to a 5v Arduino may damage the display's electronics.
 
 *Breadboard view*
+
 <img width="4541" height="2257" alt="Breadboard_bb" src="https://github.com/user-attachments/assets/ddda60bf-f6d2-46ed-9dbb-0dd44d79de86" />
 
 *Schematic view*
@@ -89,7 +90,7 @@ If the upload completes successfully, the board will reboot and start running th
 
 ---
 
-## 7) What you should see (expected behavior)
+## 7) What you should see 
 
 ### Screens / Modes
 The program has 4 internal states, but only 3 main screens:
