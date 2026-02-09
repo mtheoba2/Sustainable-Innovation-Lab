@@ -11,9 +11,10 @@ This guide shows you how to **wire**, **install libraries**, **upload**, and **r
 - reads **two ultrasonic sensors** (HC-SR04-style),
 - shows visual feeback for throw-in or block events: **NORMAL / GREEN (thank you) / RED (full)** screens on an **ILI9341 TFT**,
 - plays a short **C–E–G “success/reward” sound** on a buzzer.
-
+  
 You can find the code in the src folder. final_code.ino is the project code, whereas distance_measure.ino can be used for sensor calibration and project setup. 
 In the setup_demonstration folder you can see our prototype in practice. 
+
 ---
 
 ## 1) What you need
